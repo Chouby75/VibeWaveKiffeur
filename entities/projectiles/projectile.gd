@@ -26,7 +26,7 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body):
 	if body is Enemy:
-		Global.add_score(damage)
+		body.add_bonus_points(1)
 
 	if body is Enemy or body is Tower:
 		_explode()

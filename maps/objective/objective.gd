@@ -8,5 +8,6 @@ signal objective_destroyed
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Enemy:
+		Global.add_score(body.base_point_value + body.bonus_points)
 		Global.add_leaked_enemy()
 		body.queue_free()
