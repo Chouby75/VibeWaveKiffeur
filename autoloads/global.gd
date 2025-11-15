@@ -50,3 +50,7 @@ func reset() -> void:
 	guitar_towers_count = 0
 	for tier_score in score_tiers:
 		score_tiers[tier_score]["unlocked"] = false
+
+func update_all_enemies_speed():
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.speed = enemy.base_speed * pow(GUITAR_SPEED_BOOST_FACTOR, guitar_towers_count)

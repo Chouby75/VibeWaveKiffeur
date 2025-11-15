@@ -28,8 +28,7 @@ func add_bonus_points(points: int) -> void:
 func _ready() -> void:
 	add_to_group("enemies")
 	base_speed = speed
-	if Global.guitar_towers_count > 0:
-		speed *= Global.GUITAR_SPEED_BOOST_FACTOR
+	speed = base_speed * pow(Global.GUITAR_SPEED_BOOST_FACTOR, Global.guitar_towers_count)
 	var objective: Node2D = $/root/Map/Objective
 	nav_agent.set_target_position(objective.global_position)
 	nav_agent.max_speed = speed
