@@ -21,6 +21,6 @@ func _ready():
 		button.set_script(TowerButton)
 		button.tower_name = tower_name
 		button.tower_icon = tower_data.icon
-		button.drag_started_with_tower.connect(Global._on_tower_button_drag_started) # Connect the signal
+		button.drag_started_with_tower.connect(Global._on_tower_button_drag_started)
 		
 		tower_container.add_child(button)

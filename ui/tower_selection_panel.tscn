@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1vnwmrhrwh08"]
+
+extends Control
+class_name TowerSelectionPanel
+
+[ext_resource type="Script" path="res://ui/tower_selection_panel.gd" id="1_script"]
+
+[node name="TowerSelectionPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 600.0
+script = ExtResource("1_script")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="TowerNameLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Tower: None"
+horizontal_alignment = 1
+vertical_alignment = 1

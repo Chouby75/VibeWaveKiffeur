@@ -42,8 +42,6 @@ func _ready():
 
 func _input(event):
 	if event is InputEventMouseButton:
-		print("Map received input event: ", event)
-		
 		if ghost_tower and event.button_index == MOUSE_BUTTON_LEFT and not event.is_pressed():
 			
 			var tower_name = current_tower_name
@@ -76,16 +74,15 @@ func _input(event):
 func _process(delta):
 	if ghost_tower:
 		ghost_tower.global_position = get_global_mouse_position()
-		print("Ghost tower exists at: ", ghost_tower.global_position) 
 		var tile_coords = tilemap.local_to_map(ghost_tower.position)
 		var tile_data = tilemap.get_cell_tile_data(0, tile_coords)
 		var placement_area = ghost_tower.get_node("PlacementArea")
 		var overlapping_areas = placement_area.get_overlapping_areas()
 		
 		if (tile_data == null or tile_data.terrain_set != 0 or tile_data.terrain != 0) and overlapping_areas.size() == 0:
-			ghost_tower.modulate = Color(0, 1, 0, 0.5) 
+			ghost_tower.modulate = Color(0, 1, 0, 0.5)
 		else:
-			ghost_tower.modulate = Color(1, 0, 0, 0.5) 
+			ghost_tower.modulate = Color(1, 0, 0, 0.5)
 
 func _on_global_tower_drag_started(tower_name: String):
 	current_tower_name = tower_name
@@ -96,6 +93,8 @@ func _on_global_tower_drag_started(tower_name: String):
 	ghost_tower.input_pickable = false
 	ghost_tower.collision_layer = 0
 	ghost_tower.collision_mask = 0
+	ghost_tower.set_process(false)
+	ghost_tower.set_physics_process(false)
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed() and ghost_tower:
@@ -121,8 +120,9 @@ func _game_over():
 	
 	hud.get_node("Menus/Pause").queue_free()
 
-func _on_objective_destroyed():
-	_game_over()
-
 func _on_enemies_defeated():
 	_game_over()
+
+func _on_click_catcher_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+		Global.deselect_all_towers.emit()
