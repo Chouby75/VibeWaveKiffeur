@@ -80,6 +80,7 @@ func _on_tower_selected(tower: Tower): # New function
 	selected_tower = tower
 	print("Global: New selected tower: ", selected_tower.tower_type if selected_tower else "null")
 	tower_selection_changed.emit(selected_tower)
+	print("DEBUG: Global.tower_selection_changed signal emitted for: ", selected_tower.tower_type if selected_tower else "null")
 
 func _on_deselect_all_towers(): # New function
 	print("Global: _on_deselect_all_towers received.")

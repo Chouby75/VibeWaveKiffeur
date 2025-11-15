@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://babinwqpjwhmn"]
 
-[ext_resource type="Script" path="res://entities/towers/tower.gd" id="1_u2rls"]
+[ext_resource type="Script" uid="uid://d2vjs6tj7bjgs" path="res://entities/towers/tower.gd" id="1_u2rls"]
 [ext_resource type="Texture2D" uid="uid://nrm8gauiksh3" path="res://assets/towers/gatling/tier1/base_idle_00.png" id="1_ufm6q"]
 [ext_resource type="PackedScene" uid="uid://bswr4r1sn2dki" path="res://entities/shooter.tscn" id="3_cw0b1"]
 [ext_resource type="AudioStream" uid="uid://dkjcbquvlvltr" path="res://assets/sounds/gatling.wav" id="4_ppwhr"]

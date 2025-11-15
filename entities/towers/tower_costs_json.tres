@@ -4,6 +4,6 @@
 data = {
 "cannon": 400.0,
 "gatling": 250.0,
-"missile": 800.0,
-"guitare": 300.0
+"guitare": 300.0,
+"missile": 800.0
 }

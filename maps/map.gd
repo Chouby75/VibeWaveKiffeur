@@ -38,10 +38,11 @@ func _ready():
 	spawner.countdown_started.connect(hud._on_spawner_countdown_started)
 	spawner.wave_started.connect(hud._on_spawner_wave_started)
 	spawner.enemy_spawned.connect(_on_enemy_spawned)
-	spawner.enemies_defeated.connect(_on_enemies_defeated)
 
 func _input(event):
 	if event is InputEventMouseButton:
+		
+		# --- CAS 1: PLACER UNE TOUR (Ton code est bon, on n'y touche pas) ---
 		if ghost_tower and event.button_index == MOUSE_BUTTON_LEFT and not event.is_pressed():
 			
 			var tower_name = current_tower_name
@@ -70,6 +71,38 @@ func _input(event):
 			current_tower_name = ""
 			
 			get_viewport().set_input_as_handled()
+			return
+
+		# --- CAS 2: SÉLECTIONNER UNE TOUR (Voici la correction) ---
+		if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			var space_state = get_world_2d().direct_space_state
+			var world_click_position = get_canvas_transform().affine_inverse() * event.position
+			
+			var query = PhysicsPointQueryParameters2D.new()
+			query.position = world_click_position 
+			query.collision_mask = 2
+			query.collide_with_bodies = true
+			
+			var result_array = space_state.intersect_point(query)
+			
+			# On vérifie si le tableau a au moins un résultat
+			if result_array.size() > 0:
+				# On prend le premier dictionnaire du tableau
+				var first_hit = result_array[0]
+				# PUIS on prend le collider de ce dictionnaire
+				var clicked_node = first_hit.collider 
+			# ▲▲▲▲▲ FIN DE LA CORRECTION ▲▲▲▲▲
+				
+				if clicked_node is Tower:
+					print("Tower clicked: ", clicked_node.name) 
+					Global.tower_selection_changed.emit(clicked_node) # Corrected signal emission
+					get_viewport().set_input_as_handled()
+				else:
+					print("Clicked on something else (not a tower)")
+					Global.deselect_all_towers.emit()
+			else:
+				print("Clicked on empty space")
+				Global.deselect_all_towers.emit()
 
 func _process(delta):
 	if ghost_tower:
@@ -119,10 +152,3 @@ func _game_over():
 	hud.get_node("Menus/GameOver").enable()
 	
 	hud.get_node("Menus/Pause").queue_free()
-
-func _on_enemies_defeated():
-	_game_over()
-
-func _on_click_catcher_gui_input(event):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-		Global.deselect_all_towers.emit()

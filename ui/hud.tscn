@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://carh6bbm1af4b"]
+[gd_scene load_steps=17 format=3 uid="uid://carh6bbm1af4b"]
 
 [ext_resource type="Script" path="res://ui/hud.gd" id="1_1i8l6"]
 [ext_resource type="Texture2D" uid="uid://ix8s1c31gft5" path="res://assets/ui/heads_up/headsup_panel.png" id="1_gn7ca"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://2bx2lgilbqsm" path="res://assets/ui/heads_up/currency_window.png" id="6_mgoin"]
 [ext_resource type="PackedScene" uid="uid://wp2xxnx6uw1u" path="res://ui/pause.tscn" id="8_qxaai"]
 [ext_resource type="PackedScene" uid="uid://dkovbmmfciv1f" path="res://ui/game_over.tscn" id="9_lnowy"]
+[ext_resource type="PackedScene" uid="uid://d2d2d2d2d2d2" path="res://ui/tower_options_panel.tscn" id="10_tower_options_panel"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_g2s2v"]
 texture = ExtResource("1_gn7ca")
@@ -101,6 +102,19 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxTexture_mwlci")
 text = "Wave: 1
 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemiesLeakedLabel" type="Label" parent="Control"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 11.0
+offset_top = 75.0
+offset_right = 155.0
+offset_bottom = 139.0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_mwlci")
+text = "Leaked: 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -206,6 +220,20 @@ offset_right = 1516.0
 offset_bottom = 794.004
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="TowerOptionsPanel" parent="." instance=ExtResource("10_tower_options_panel")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 9
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_top = 0.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 200.0
+offset_bottom = 0.0
+grow_vertical = 2
 
 [connection signal="timeout" from="Control/NextWave/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="Control/TierUnlockTimer" to="." method="_on_tier_unlock_timer_timeout"]

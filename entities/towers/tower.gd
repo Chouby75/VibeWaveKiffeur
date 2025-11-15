@@ -17,32 +17,18 @@ var is_selected := false # New variable
 
 func _ready():
 	set_pickable(true) # Explicitly make the StaticBody2D pickable
-	print("Tower '", tower_type, "' _ready() called. Connecting tower_selected to Global.")
-	tower_selected.connect(Global._on_tower_selected)
+	print("Tower '", tower_type, "' _ready() called.")
+	Global.tower_selection_changed.connect(_on_global_tower_selection_changed) # Listen to global selection changes
 	
 	if collision:
 		print("CollisionShape2D enabled: ", not collision.disabled)
 	else:
 		print("CollisionShape2D node not found!")
 	
-func _on_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-		print("TOUR CLIQUÉE: ", self.tower_type, " (Input Event received)")
-		
-		var previously_selected = is_selected
-		is_selected = not is_selected
-		
-		if is_selected:
-			print("Tower '", tower_type, "' is now selected. Emitting self.")
-			tower_selected.emit(self)
-		elif previously_selected and not is_selected: # If it was selected and now it's deselected
-			print("Tower '", tower_type, "' is now deselected. Emitting null.")
-			tower_selected.emit(null) # Deselect
-			
-		_update_selection_visuals()
-		
-		hud.show_options_menu() # Keep this for now, will be adjusted later
-		get_viewport().set_input_as_handled()
+func _process(delta: float) -> void:
+	# Debug print to confirm the script is running
+	# print("Tower '", tower_type, "' _process is running.")
+	pass # Keep this for actual game logic if any
 
 func _physics_process(delta: float) -> void:
 	if shooter.targets:
@@ -84,3 +70,7 @@ func _update_selection_visuals():
 		print("Tower selected: ", tower_type)
 	else:
 		print("Tower deselected: ", tower_type)
+
+func _on_global_tower_selection_changed(selected_tower: Tower):
+	is_selected = (selected_tower == self)
+	_update_selection_visuals()
