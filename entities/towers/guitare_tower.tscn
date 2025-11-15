@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://crx432f8wvmt"]
+
+[ext_resource type="PackedScene" uid="uid://babinwqpjwhmn" path="res://entities/towers/tower.tscn" id="1_y4l16"]
+[ext_resource type="Script" path="res://entities/towers/guitare_tower.gd" id="2_abcde"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_aura"]
+radius = 600.0
+
+[node name="GuitareTower" instance=ExtResource("1_y4l16")]
+script = ExtResource("2_abcde")
+tower_type = "guitare"
+
+[node name="Shooter" parent="." index="2"]
+projectile_spread = 0.08
+
+[node name="Muzzle2" type="Marker2D" parent="Shooter/Gun" index="1"]
+position = Vector2(61, 19)
+
+[node name="Aura" type="Area2D" parent="." index="3"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Aura" index="0"]
+shape = SubResource("CircleShape2D_aura")
+
+[connection signal="body_entered" from="Aura" to="." method="_on_aura_body_entered"]
+[connection signal="body_exited" from="Aura" to="." method="_on_aura_body_exited"]
+
+[editable path="Shooter"]

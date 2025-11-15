@@ -4,11 +4,16 @@ extends CharacterBody2D
 signal enemy_died(enemy: Enemy)
 signal enemy_removed # emitted when enemy dies or reaches objective
 
-@export var speed := 150
+@export var speed := 150:
+	set(value):
+		speed = value
+		if nav_agent:
+			nav_agent.max_speed = speed
 @export var rot_speed := 10.0
-@export var health := 100:
-	set = set_health
 @export var kill_reward := 100
+@export var base_point_value = 10
+var bonus_points = 0
+var base_speed: int
 
 @onready var nav_agent := $NavigationAgent2D as NavigationAgent2D
 @onready var state_machine := $StateMachine as StateMachine
@@ -17,13 +22,14 @@ signal enemy_removed # emitted when enemy dies or reaches objective
 @onready var default_sound := $DefaultSound as AudioStreamPlayer2D
 @onready var hud := $UI/EntityHUD as EntityHUD
 
+func add_bonus_points(points: int) -> void:
+	bonus_points += points
+
 func _ready() -> void:
+	base_speed = speed
 	var objective: Node2D = $/root/Map/Objective
 	nav_agent.set_target_position(objective.global_position)
 	nav_agent.max_speed = speed
-	
-	hud.health_bar.max_value = health
-	hud.health_bar.value = health
 	
 	var shooter = get_shooter()
 	if shooter:
@@ -54,14 +60,6 @@ func _on_navigation_agent_2d_velocity_computed(safe_velocity: Vector2) -> void:
 	move_and_slide()
 
 	
-func set_health(value: int) -> void:
-	health = max(0, value)
-	if is_instance_valid(hud):
-		hud.health_bar.value = health
-	if health == 0:
-		state_machine.transition_to("Die")
-
-
 func get_shooter() -> Shooter:
 	return null
 
@@ -71,6 +69,10 @@ func play_animation(anim_name: String) -> void:
 
 
 func die() -> void:
+	# Prevent die() from being called multiple times
+	if state_machine.current_state and state_machine.current_state.name == "Die":
+		return
+	state_machine.transition_to("Die")
 	collision_shape.set_deferred("disabled", true)
 	speed = 0
 	nav_agent.set_velocity(Vector2.ZERO)
