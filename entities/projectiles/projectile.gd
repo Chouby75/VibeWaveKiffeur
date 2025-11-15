@@ -25,14 +25,16 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body):
+	if body is Enemy:
+		Global.add_score(damage)
+
 	if body is Enemy or body is Tower:
-		body.health -= damage
 		_explode()
 
 
 func _on_area_entered(area):
 	if area is Objective:
-		area.health -= damage
+		Global.add_score(damage)
 		_explode()
 
 
@@ -51,4 +53,3 @@ func _on_hit_vfx_animation_finished():
 
 func _on_lifetime_timer_timeout():
 	queue_free()
-

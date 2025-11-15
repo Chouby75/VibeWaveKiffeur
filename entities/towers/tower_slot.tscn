@@ -35,10 +35,6 @@ offset_top = -44.0
 offset_right = 243.0
 offset_bottom = 453.0
 
-[node name="Repair" type="Button" parent="UI/TowerActions"]
-layout_mode = 2
-icon = ExtResource("4_s6hwn")
-
 [node name="Exchange" type="Button" parent="UI/TowerActions"]
 layout_mode = 2
 icon = ExtResource("5_qshhm")
@@ -49,6 +45,5 @@ icon = ExtResource("6_r8luu")
 
 [connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="tower_requested" from="UI/TowerPopup" to="." method="_on_tower_popup_tower_requested"]
-[connection signal="pressed" from="UI/TowerActions/Repair" to="." method="_on_repair_pressed"]
 [connection signal="pressed" from="UI/TowerActions/Exchange" to="." method="_on_exchange_pressed"]
 [connection signal="pressed" from="UI/TowerActions/Sell" to="." method="_on_sell_pressed"]

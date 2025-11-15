@@ -96,7 +96,7 @@ size = Vector2(51, 61)
 [node name="InfantryT1" instance=ExtResource("1_tubwb")]
 collision_mask = 7
 script = ExtResource("2_jdd0j")
-objective_damage = 10
+base_point_value = 10
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_nfy43")

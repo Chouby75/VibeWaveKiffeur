@@ -85,9 +85,7 @@ animations = [{
 }]
 
 [node name="InfantryT2" instance=ExtResource("1_ocb1o")]
-objective_damage = 20
 speed = 200
-health = 200
 kill_reward = 200
 
 [node name="AnimatedSprite2D" parent="." index="0"]

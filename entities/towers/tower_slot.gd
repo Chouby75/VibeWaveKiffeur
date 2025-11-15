@@ -8,7 +8,8 @@ const PRICE_LABEL_PATH := "UI/TowerPopup/Background/Panel/Towers/%s/Label"
 var _towers_to_build := {
 	"gatling": preload("res://entities/towers/gatling_tower.tscn"),
 	"cannon": preload("res://entities/towers/cannon_tower.tscn"),
-	"missile": preload("res://entities/towers/missile_tower.tscn")
+	"missile": preload("res://entities/towers/missile_tower.tscn"),
+	"guitare": preload("res://entities/towers/guitare_tower.tscn")
 }
 var tower: Tower
 
@@ -57,19 +58,6 @@ func _on_tower_destroyed():
 	tower_actions.visible = false
 
 
-func _on_repair_pressed():
-	var tower_cost: int = Global.tower_costs[tower.tower_type]
-	var missing_health_pct: float = float(tower.max_health - tower.health) / tower.max_health
-	var repair_cost: int = floor(tower_cost * missing_health_pct)
-	if repair_cost <= Global.money:
-		tower.repair()
-		Global.money -= repair_cost
-		tower_actions.visible = false
-	else:
-		var repair_btn := tower_actions.get_node("Repair") as Button
-		_flash_ui(repair_btn, "ff383f")
-
-
 func _on_exchange_pressed():
 	_on_sell_pressed()
 	tower_popup.show()
@@ -77,8 +65,7 @@ func _on_exchange_pressed():
 
 func _on_sell_pressed():
 	var tower_cost: int = Global.tower_costs[tower.tower_type]
-	var remaining_health_pct: float = float(tower.health) / tower.max_health
-	var tower_value: int = floor(tower_cost * remaining_health_pct)
+	var tower_value: int = floor(tower_cost * 0.7)
 	Global.money += tower_value
 	tower.queue_free()
 	tower_actions.visible = false
