@@ -20,6 +20,7 @@ func _ready():
 	var hud = camera.hud as HUD
 	Global.money_changed.connect(hud._on_money_changed)
 	Global.score_changed.connect(hud._on_score_changed)
+	Global.tier_unlocked.connect(hud._on_tier_unlocked)
 	Global.enemies_leaked_changed.connect(self._on_enemies_leaked_changed)
 	Global.money = starting_money
 	spawner.countdown_started.connect(hud._on_spawner_countdown_started)
