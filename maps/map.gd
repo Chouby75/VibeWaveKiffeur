@@ -1,6 +1,7 @@
 extends Node2D
 
 @export var starting_money := 5000
+@export var max_leaked_enemies = 20
 
 @onready var tilemap := $TileMap as TileMap
 @onready var camera := $Camera2D as Camera2D
@@ -18,14 +19,18 @@ func _ready():
 	# initialize money and connect signals
 	var hud = camera.hud as HUD
 	Global.money_changed.connect(hud._on_money_changed)
+	Global.score_changed.connect(hud._on_score_changed)
+	Global.enemies_leaked_changed.connect(self._on_enemies_leaked_changed)
 	Global.money = starting_money
-	hud.initialize(objective.health)
-	objective.health_changed.connect(hud._on_objective_health_changed)
-	objective.objective_destroyed.connect(_on_objective_destroyed)
 	spawner.countdown_started.connect(hud._on_spawner_countdown_started)
 	spawner.wave_started.connect(hud._on_spawner_wave_started)
 	spawner.enemy_spawned.connect(_on_enemy_spawned)
 	spawner.enemies_defeated.connect(_on_enemies_defeated)
+
+func _on_enemies_leaked_changed(count: int):
+	if count >= max_leaked_enemies:
+		_game_over()
+
 
 	
 func _on_enemy_spawned(enemy: Enemy):
@@ -34,6 +39,7 @@ func _on_enemy_spawned(enemy: Enemy):
 
 func _on_enemy_died(enemy: Enemy):
 	Global.money += enemy.kill_reward
+	Global.add_score(enemy.base_point_value + enemy.bonus_points)
 
 
 func _game_over():
