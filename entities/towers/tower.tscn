@@ -16,6 +16,14 @@ collision_mask = 33
 input_pickable = true
 script = ExtResource("1_u2rls")
 
+[node name="PlacementArea" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlacementArea"]
+position = Vector2(0.5, 5)
+shape = SubResource("RectangleShape2D_xawuj")
+
 [node name="Foundation" type="Sprite2D" parent="."]
 texture = ExtResource("1_ufm6q")
 

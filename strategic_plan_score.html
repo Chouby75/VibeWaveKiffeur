@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Stratégique : Système de Score Dynamique</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+        h1, h2, h3 {
+            color: #212529;
+            font-weight: 600;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+        h2 {
+            font-size: 1.75rem;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 0.4rem;
+        }
+        h3 {
+            font-size: 1.4rem;
+        }
+        p, li {
+            font-size: 1rem;
+            color: #495057;
+        }
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+        .section {
+            margin-bottom: 2.5rem;
+        }
+        .emoji {
+            margin-right: 0.75rem;
+        }
+        .alert {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 6px;
+            border-left-width: 5px;
+            border-left-style: solid;
+        }
+        .alert-info {
+            background-color: #cff4fc;
+            border-color: #0dcaf0;
+            color: #055160;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">📜</span>Plan Stratégique : Système de Score Dynamique</h1>
+
+        <div class="section" id="understanding">
+            <h2><span class="emoji">🎯</span>1. Compréhension de l'Objectif</h2>
+            <p>
+                L'objectif est d'implémenter un <strong>système de score dynamique</strong> pour enrichir l'expérience de jeu. Plutôt qu'un simple score basé sur l'élimination d'ennemis, ce système introduira une mécanique de "prise de risque/récompense". Le joueur pourra utiliser des tours spécifiques, dites de "buff", qui n'infligent pas de dégâts mais augmentent la valeur en points des ennemis touchés. Le score final d'un ennemi sera la somme de sa valeur de base et des bonus accumulés, ajoutée au score global du joueur au moment de la destruction de l'ennemi.
+            </p>
+        </div>
+
+        <div class="section" id="investigation">
+            <h2><span class="emoji">🕵️</span>2. Investigation & Analyse</h2>
+            <p>
+                Pour intégrer ce système de manière robuste, une analyse des composants clés du projet est nécessaire.
+            </p>
+            <ol>
+                <li>
+                    <strong>Gestion de l'état global du jeu :</strong>
+                    <ul>
+                        <li>Le fichier <code>autoloads/global.gd</code> est le candidat idéal pour stocker le score du joueur (<code>player_score</code>). Il faut vérifier sa structure pour y ajouter la variable et une fonction de mise à jour (ex: <code>add_to_score(amount)</code>).</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Analyse de l'entité "Ennemi" :</strong>
+                    <ul>
+                        <li>Le script principal <code>entities/enemies/enemy.gd</code> doit être examiné. Il faudra y ajouter les variables <code>base_point_value</code> et <code>bonus_points</code>.</li>
+                        <li>Il est crucial d'identifier la logique de mort de l'ennemi (probablement quand <code>health <= 0</code>) pour y déclencher l'envoi du score.</li>
+                        <li>La meilleure approche pour communiquer le score est un <strong>signal Godot</strong> (ex: <code>signal died(total_points)</code>) qui sera émis par l'ennemi juste avant sa suppression (<code>queue_free()</code>).</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Analyse du système d'attaque des tours :</strong>
+                    <ul>
+                        <li>Il faut comprendre comment les projectiles (<code>entities/projectiles/</code>) interagissent avec les ennemis. L'interaction se fait probablement via une détection de collision qui appelle une fonction comme <code>take_damage</code> sur l'ennemi.</li>
+                        <li>Pour la tour de "buff", il faudra créer un nouveau type de projectile qui, au lieu d'appeler <code>take_damage</code>, appellera une nouvelle fonction sur l'ennemi : <code>increase_bonus_points(amount)</code>.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Intégration à l'interface utilisateur (UI) :</strong>
+                    <ul>
+                        <li>Le HUD principal (<code>ui/hud.tscn</code> et <code>ui/hud.gd</code>) devra être modifié pour afficher le score actuel. Un nouveau <code>Label</code> sera ajouté et son texte sera mis à jour via un signal provenant de <code>global.gd</code> (ex: <code>score_updated</code>) pour découpler la logique de l'affichage.</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="section" id="approach">
+            <h2><span class="emoji">🗺️</span>3. Approche Stratégique Proposée</h2>
+            <p>
+                L'implémentation sera structurée en plusieurs phases pour une intégration progressive et contrôlée.
+            </p>
+            <h3>Phase 1 : Mise en place des fondations du score</h3>
+            <ol>
+                <li><strong>Variable Globale :</strong> Ajouter <code>var player_score = 0</code> et un signal <code>score_updated(new_score)</code> dans <code>global.gd</code>.</li>
+                <li><strong>Propriétés de l'Ennemi :</strong> Ajouter <code>export var base_point_value = 10</code> et <code>var bonus_points = 0</code> au script <code>enemy.gd</code>.</li>
+                <li><strong>Affichage UI :</strong> Ajouter un Label "Score" dans <code>hud.tscn</code> et le connecter au signal <code>score_updated</code> de <code>global.gd</code> pour rafraîchir l'affichage.</li>
+            </ol>
+
+            <h3>Phase 2 : Mécanisme d'attribution des points</h3>
+            <ol>
+                <li><strong>Signal de Mort :</strong> Déclarer <code>signal died(points)</code> dans <code>enemy.gd</code>.</li>
+                <li><strong>Logique d'Émission :</strong> Dans la fonction où la vie de l'ennemi est gérée, lorsque la vie atteint zéro, calculer <code>var total_points = base_point_value + bonus_points</code> et émettre le signal : <code>emit_signal("died", total_points)</code>.</li>
+                <li><strong>Connexion du Signal :</strong> Dans le script qui instancie les ennemis (probablement un "spawner" dans <code>maps/</code>), connecter le signal <code>died</code> de chaque nouvel ennemi à une fonction dans <code>global.gd</code> qui mettra à jour le score.</li>
+            </ol>
+
+            <h3>Phase 3 : Création de la tour de "Buff"</h3>
+            <ol>
+                <li><strong>Nouvelle Tour :</strong> Créer une nouvelle scène de tour (ex: <code>support_tower.tscn</code>) et son script, en copiant une tour existante comme base.</li>
+                <li><strong>Nouvelle Fonction sur l'Ennemi :</strong> Ajouter <code>func increase_bonus_points(amount): bonus_points += amount</code> dans <code>enemy.gd</code>.</li>
+                <li><strong>Projectile de Buff :</strong> Créer un projectile qui, lors de l'impact avec un ennemi, appelle <code>increase_bonus_points</code> au lieu de faire des dégâts.</li>
+                <li><strong>Intégration au Menu :</strong> Ajouter la nouvelle tour au menu de construction (<code>ui/tower_popup.gd</code>) pour que le joueur puisse la sélectionner.</li>
+            </ol>
+            
+            <h3>Phase 4 : Amélioration de l'expérience utilisateur (Feedback)</h3>
+             <ol>
+                <li><strong>Feedback Visuel :</strong> Quand un ennemi est "buffé", déclencher un effet visuel simple (ex: un clignotement de couleur via un <code>Tween</code>) pour informer le joueur.</li>
+                <li><strong>Texte Flottant :</strong> Lors de la destruction d'un ennemi, instancier une petite animation de texte à sa position indiquant les points gagnés (ex: "+50").</li>
+            </ol>
+        </div>
+
+        <div class="section" id="verification">
+            <h2><span class="emoji">✅</span>4. Stratégie de Vérification</h2>
+            <p>
+                La validation se fera par des tests en jeu pour chaque aspect de la fonctionnalité :
+            </p>
+            <ul>
+                <li><strong>Scénario 1 (Baseline) :</strong> Détruire un ennemi avec une tour standard. Vérifier que le score augmente uniquement de la <code>base_point_value</code> de l'ennemi.</li>
+                <li><strong>Scénario 2 (Buff) :</strong> Construire une tour de "buff". La laisser tirer plusieurs fois sur un ennemi.</li>
+                <li><strong>Scénario 3 (Cash-in) :</strong> Détruire l'ennemi "buffé" avec une tour standard. Vérifier que le score augmente de <code>base_point_value + bonus_points</code>, où les points bonus correspondent au nombre de tirs de la tour de buff.</li>
+                <li><strong>Vérification UI :</strong> S'assurer que le score affiché dans le HUD est mis à jour en temps réel et correspond à la valeur dans <code>global.gd</code>.</li>
+            </ul>
+        </div>
+
+        <div class="section" id="challenges">
+            <h2><span class="emoji">⚠️</span>5. Défis Anticipés</h2>
+            <div class="alert alert-info">
+                <p><strong>Équilibrage de la mécanique :</strong> Le défi majeur sera de nature conceptuelle. La tour de "buff" doit offrir un compromis intéressant. Si elle est trop chère ou si le bonus est trop faible, elle ne sera jamais utilisée. Si elle est trop efficace, elle pourrait devenir la seule stratégie viable. Des tests approfondis seront nécessaires pour ajuster son coût, sa cadence de tir et la valeur du bonus qu'elle confère.</p>
+                <p><strong>Clarté pour le joueur :</strong> La mécanique doit être intuitive. Le rôle de la tour de "buff" et l'état "buffé" d'un ennemi doivent être communiqués clairement par des descriptions dans l'UI et des retours visuels en jeu. Sans cela, le joueur pourrait ne pas comprendre l'intérêt de cette nouvelle tour.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

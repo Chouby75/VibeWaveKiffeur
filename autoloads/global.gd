@@ -4,6 +4,7 @@ signal money_changed(money: int)
 signal score_changed(score: int)
 signal enemies_leaked_changed(count: int)
 signal tier_unlocked(tier_name: String)
+signal tower_drag_started(tower_name: String)
 
 var money: int:
 	set(m):
@@ -54,3 +55,6 @@ func reset() -> void:
 func update_all_enemies_speed():
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.speed = enemy.base_speed * pow(GUITAR_SPEED_BOOST_FACTOR, guitar_towers_count)
+
+func _on_tower_button_drag_started(tower_name: String): # New function
+	tower_drag_started.emit(tower_name)

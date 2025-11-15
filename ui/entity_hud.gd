@@ -6,7 +6,6 @@ const RED := Color("#e86a17")
 const YELLOW := Color("#d2b82d")
 const GREEN := Color("#88e060")
 
-@onready var health_bar := $VBoxContainer/HealthBar as TextureProgressBar
 @onready var reload_bar := $VBoxContainer/ReloadBar as ProgressBar
 
 
@@ -27,7 +26,3 @@ func _on_reload_bar_value_changed(value):
 		reload_bar.self_modulate = YELLOW
 	elif value > reload_bar.max_value * 0.0:
 		reload_bar.self_modulate = RED
-
-
-func _on_health_bar_value_changed(value: int):
-	health_bar.self_modulate = RED if value <= health_bar.max_value / 4 else GREEN

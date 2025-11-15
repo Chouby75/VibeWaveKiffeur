@@ -14,18 +14,18 @@
   Cette stratégie de refactoring vise à moderniser la base de code vers GDScript 2.0, à découpler les systèmes
   et à mettre en place une architecture modulaire et événementielle.
 
-  2. Audit : 3 "Code Smells" Majeurs Identifiés
+  2. Audit : 3 "C1ode Smells" Majeurs Identifiés
 
    1. Le Singleton "Divin" (`global.gd`) : Le fichier autoloads/global.gd agit comme un fourre-tout. Il mélange
-      la gestion de l'état du jeu (argent, vies), la logique de l'interface utilisateur et potentiellement
-      d'autres systèmes. Cela viole le principe de responsabilité unique (Single Responsibility Principle),
+	  la gestion de l'état du jeu (argent, vies), la logique de l'interface utilisateur et potentiellement
+	  d'autres systèmes. Cela viole le principe de responsabilité unique (Single Responsibility Principle),
       rendant le code difficile à lire, à débugger et à faire évoluer.
    2. Dépendances Fragiles (`get_node()`) : Le code est très probablement truffé d'appels comme
-      get_node("../../../UI/HUD/MoneyLabel"). Ces chemins sont extrêmement fragiles : le moindre changement dans
-      l'arborescence de la scène principale casse le jeu. C'est un cauchemar de maintenance.
+	  get_node("../../../UI/HUD/MoneyLabel"). Ces chemins sont extrêmement fragiles : le moindre changement dans
+	  l'arborescence de la scène principale casse le jeu. C'est un cauchemar de maintenance.
    3. Couplage Fort UI-Logique : Les scènes de jeu (comme map.gd ou enemy.gd) ont probablement des références
-      directes à des nœuds d'interface (HUD). La logique de jeu ne devrait jamais savoir comment l'information
-      est affichée. Elle doit se contenter de notifier que son état a changé. L'UI, de son côté, écoute ces
+	  directes à des nœuds d'interface (HUD). La logique de jeu ne devrait jamais savoir comment l'information
+	  est affichée. Elle doit se contenter de notifier que son état a changé. L'UI, de son côté, écoute ces
       notifications et se met à jour.
 
   3. Stratégie de Refactoring
@@ -33,14 +33,14 @@
   La restructuration s'articulera autour des principes suivants :
 
    * Architecture Événementielle : Nous allons introduire un bus d'événements global (GameEvents). Au lieu que
-     les objets s'appellent directement, ils émettront des signaux globaux (ex:
-     GameEvents.enemy_destroyed.emit(reward)). D'autres systèmes (comme le GameState ou le HUD) s'abonneront à
-     ces signaux.
+	 les objets s'appellent directement, ils émettront des signaux globaux (ex:
+	 GameEvents.enemy_destroyed.emit(reward)). D'autres systèmes (comme le GameState ou le HUD) s'abonneront à
+	 ces signaux.
    * Découplage et Injection de Dépendances : Fini les get_node(). Les dépendances externes seront injectées via
-     @export ou gérées par des singletons bien définis. Les dépendances internes (nœuds enfants) utiliseront la
-     notation %NomUnique ou @onready.
+	 @export ou gérées par des singletons bien définis. Les dépendances internes (nœuds enfants) utiliseront la
+	 notation %NomUnique ou @onready.
    * GDScript 2.0 et Typage Statique Intégral : L'ensemble du code sera réécrit avec un typage statique fort.
-     Cela élimine une classe entière de bugs à l'exécution et améliore considérablement l'autocomplétion et la
+	 Cela élimine une classe entière de bugs à l'exécution et améliore considérablement l'autocomplétion et la
      lisibilité.
    * Modularité des Scènes : Chaque entité (ennemi, tour, projectile) sera une scène autonome avec son propre
      script, responsable uniquement de sa propre logique.
@@ -56,15 +56,15 @@
 
   Voici l'arborescence cible et le code intégral pour chaque fichier modifié ou créé.
 
-    1 STRUCTURE_PROJET_REFAITE/
-    2 ├── singletons/
-    3 │   ├── GameEvents.gd       # (NOUVEAU) Bus de signaux global
-    4 │   ├── GameState.gd        # (Refactor de global.gd) Gère argent, vies, score
-    5 │   ├── SoundManager.gd     # (NOUVEAU) Squelette pour la gestion du son
-    6 │   ├── SaveManager.gd      # (NOUVEAU) Squelette pour la sauvegarde
-    7 │   └── ObjectPool.gd       # (NOUVEAU) Système de pooling générique
-    8 │
-    9 ├── entities/
+	1 STRUCTURE_PROJET_REFAITE/
+	2 ├── singletons/
+	3 │   ├── GameEvents.gd       # (NOUVEAU) Bus de signaux global
+	4 │   ├── GameState.gd        # (Refactor de global.gd) Gère argent, vies, score
+	5 │   ├── SoundManager.gd     # (NOUVEAU) Squelette pour la gestion du son
+	6 │   ├── SaveManager.gd      # (NOUVEAU) Squelette pour la sauvegarde
+	7 │   └── ObjectPool.gd       # (NOUVEAU) Système de pooling générique
+	8 │
+	9 ├── entities/
    10 │   ├── enemies/
    11 │   │   ├── enemy.gd          # (REFACTORISÉ) Logique de base d'un ennemi
    12 │   │   └── enemy.tscn        # (À modifier pour utiliser le script refactorisé)
@@ -97,7 +97,7 @@
     6
     7 extends Node
     8
-    9 ## Émis lorsqu'un ennemi est détruit. Le GameState l'utilisera pour ajouter de l'argent/score.
+	9 ## Émis lorsqu'un ennemi est détruit. Le GameState l'utilisera pour ajouter de l'argent/score.
    10 signal enemy_destroyed(reward: int, position: Vector2)
    11
    12 ## Émis lorsque la base du joueur subit des dégâts.
@@ -114,15 +114,15 @@
 
   `singletons/GameState.gd`
 
-    1 # GameState.gd
-    2 # AUTOLOAD / SINGLETON - Nommé "GameState"
-    3 # Gère l'état principal du jeu : argent, vies, etc.
-    4 # Remplace la logique de state de l'ancien `global.gd`.
-    5
-    6 extends Node
-    7
-    8 signal money_updated(new_money: int)
-    9 signal lives_updated(new_lives: int)
+	1 # GameState.gd
+	2 # AUTOLOAD / SINGLETON - Nommé "GameState"
+	3 # Gère l'état principal du jeu : argent, vies, etc.
+	4 # Remplace la logique de state de l'ancien `global.gd`.
+	5
+	6 extends Node
+	7
+	8 signal money_updated(new_money: int)
+	9 signal lives_updated(new_lives: int)
    10
    11 const START_MONEY: int = 100
    12 const START_LIVES: int = 20
@@ -162,13 +162,13 @@
 
   `singletons/SoundManager.gd`
 
-    1 # SoundManager.gd
-    2 # AUTOLOAD / SINGLETON - Nommé "SoundManager"
-    3 # Squelette pour un gestionnaire de sons robuste.
-    4
-    5 extends Node
-    6
-    7 # Instruction : Dans l'onglet "Audio" du dock, créez les bus "Music", "SFX", "UI".
+	1 # SoundManager.gd
+	2 # AUTOLOAD / SINGLETON - Nommé "SoundManager"
+	3 # Squelette pour un gestionnaire de sons robuste.
+	4
+	5 extends Node
+	6
+	7 # Instruction : Dans l'onglet "Audio" du dock, créez les bus "Music", "SFX", "UI".
     8 @export var sfx_player: AudioStreamPlayer
     9 @export var music_player: AudioStreamPlayer
    10
@@ -318,13 +318,13 @@
 
   `entities/enemies/enemy.gd`
 
-    1 # enemy.gd
-    2 # Script pour la scène Enemy.tscn
-    3
-    4 class_name Enemy
-    5 extends PathFollow2D
-    6
-    7 # Signal émis lorsque l'ennemi est détruit (pas seulement quand il meurt de dégâts)
+	1 # enemy.gd
+	2 # Script pour la scène Enemy.tscn
+	3
+	4 class_name Enemy
+	5 extends PathFollow2D
+	6
+	7 # Signal émis lorsque l'ennemi est détruit (pas seulement quand il meurt de dégâts)
     8 signal destroyed
     9
    10 @export var health: int = 100
@@ -360,9 +360,9 @@
     4 extends CanvasLayer
     5
     6 # Utiliser les Noms Uniques (%) est plus robuste que get_node()
-    7 # Dans l'éditeur, faites un clic droit sur les noeuds Label et cochez "Access as Unique Name"
-    8 @onready var money_label: Label = %MoneyLabel
-    9 @onready var lives_label: Label = %LivesLabel
+	7 # Dans l'éditeur, faites un clic droit sur les noeuds Label et cochez "Access as Unique Name"
+	8 @onready var money_label: Label = %MoneyLabel
+	9 @onready var lives_label: Label = %LivesLabel
    10 @onready var score_tween: Tween # Pour le "Game Feel"
    11
    12 func _ready() -> void:
@@ -399,12 +399,12 @@
 
   `maps/camera/CameraShake.gd`
 
-    1 # CameraShake.gd
-    2 # Script à attacher à votre Camera2D
-    3
-    4 extends Camera2D
-    5
-    6 @export var decay_rate: float = 5.0 # Vitesse à laquelle la secousse s'estompe
+	1 # CameraShake.gd
+	2 # Script à attacher à votre Camera2D
+	3
+	4 extends Camera2D
+	5
+	6 @export var decay_rate: float = 5.0 # Vitesse à laquelle la secousse s'estompe
     7 @export var max_offset: Vector2 = Vector2(20, 15) # Décalage maximum en pixels
     8 @export var max_roll: float = 0.05 # Rotation maximale en radians
     9
