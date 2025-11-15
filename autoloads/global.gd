@@ -18,6 +18,8 @@ var enemies_leaked: int:
 		enemies_leaked = l
 		enemies_leaked_changed.emit(enemies_leaked)
 var tower_costs: Dictionary
+var guitar_towers_count := 0
+const GUITAR_SPEED_BOOST_FACTOR := 1.5
 
 var score_tiers = {
 	1000: {"name": "TIER1", "gold": 500, "unlocked": false},
@@ -45,5 +47,6 @@ func reset() -> void:
 	player_score = 0
 	money = 0
 	enemies_leaked = 0
+	guitar_towers_count = 0
 	for tier_score in score_tiers:
 		score_tiers[tier_score]["unlocked"] = false

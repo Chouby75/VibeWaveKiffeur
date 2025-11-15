@@ -26,7 +26,10 @@ func add_bonus_points(points: int) -> void:
 	bonus_points += points
 
 func _ready() -> void:
+	add_to_group("enemies")
 	base_speed = speed
+	if Global.guitar_towers_count > 0:
+		speed *= Global.GUITAR_SPEED_BOOST_FACTOR
 	var objective: Node2D = $/root/Map/Objective
 	nav_agent.set_target_position(objective.global_position)
 	nav_agent.max_speed = speed
@@ -34,6 +37,9 @@ func _ready() -> void:
 	var shooter = get_shooter()
 	if shooter:
 		shooter.has_shot.connect(self._on_shooter_has_shot)
+
+func _exit_tree():
+	remove_from_group("enemies")
 
 
 func _calculate_rot(start_rot: float, target_rot: float, _speed: float, delta: float) -> float:
